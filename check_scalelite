@@ -94,10 +94,10 @@ done
 # If the state file doesn't exist or is not readable, exit
 
 if [ ! -e "$CHECKFILE" ]; then
-    echo "scalelite check error: state file $CHECKFILE does not exist! Did you set up the cronjob?"
+    echo "SCALELITE ERROR - state file $CHECKFILE does not exist! Did you set up the cronjob?"
     exit "$STATE_UNKNOWN"
 elif [ ! -r "$CHECKFILE" ] ; then
-    echo "scalelite check error: state file $CHECKFILE is not readable!"
+    echo "SCALELITE ERROR - state file $CHECKFILE is not readable!"
     exit "$STATE_UNKNOWN"
 fi
 
@@ -106,26 +106,26 @@ count=$(grep -c ".*" "$CHECKFILE" 2>&1)
 ((count-=1))
 
 if [[ $? -gt 1 ]]; then
-    echo "scalelite check error: $count"
+    echo "SCALELITE ERROR - $count"
     exit "$STATE_UNKNOWN"
 fi
 
 # Count the number of nodes we have that are enabled and online and handle errors when grep fails
 count_eo=$(grep -c "enabled.*online" "$CHECKFILE" 2>&1)
 if [[ $? -gt 1 ]]; then
-    echo "scalelite check error: $count"
+    echo "SCALELITE ERROR - $count"
     exit "$STATE_UNKNOWN"
 fi
 
 if [ "$count_eo" -gt "$warning" ]; then
-    echo "check ok - $count_eo out of $count nodes are live"
+    echo "SCALELITE OK - $count_eo out of $count nodes are live"
     exitstatus=$STATE_OK
 else
     if [ "$count_eo" -gt "$critical" ]; then
-        echo "check warning - $count_eo out of $count nodes are live"
+        echo "SCALELITE WARNING - $count_eo out of $count nodes are live"
         exitstatus=$STATE_WARNING
     else
-        echo "check critical - $count_eo out of $count nodes are live"
+        echo "SCALELITE CRITICAL - $count_eo out of $count nodes are live"
         exitstatus=$STATE_CRITICAL
     fi
 fi
